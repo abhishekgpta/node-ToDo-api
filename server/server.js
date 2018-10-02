@@ -10,7 +10,6 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post("/todos",(req,res)=>{
-	console.log(req.body);
 	var todo = new Todo({
 		text:req.body.text
 	});
@@ -50,7 +49,7 @@ app.delete("/todos/:id",(req,res)=>{
 	if(!ObjectID.isValid(id)){
 		return res.status(404).send();
 	}	
-	Todo.findByIdAndRemove(id).then((todo)=>{
+	Todo.findByIdAndDelete(id).then((todo)=>{
 		if(!todo){
 			return res.status(404).send();
 		}
