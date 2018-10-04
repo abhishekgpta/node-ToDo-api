@@ -89,6 +89,22 @@ app.patch("/todos/:id",(req,res)=>{
 		res.status(400).send();
 	});
 })
+
+app.post("/users",(req,res)=>{
+	var body=_.pick(req.body,['email','password']);
+	var user = new User(body);
+	user.save().then(()=>{
+		return user.generateAuthToken();
+		//res.send(user);
+	},(err)=>{
+		res.status(400).send(err);
+	}).then((token)=>{
+		res.header("x-auth",token).send(user);
+	}).catch((e)=>{
+		res.status(400).send(err);
+	});
+});
+
 app.listen(process.env.PORT,()=>{
 	console.log("Started on port 3000");
 });
