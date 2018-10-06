@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const {ObjectID} = require("mongodb");
 const _ = require("lodash");
+const fs = require("fs");
 
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
@@ -12,6 +13,18 @@ const {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 app.use(bodyParser.json());
+
+/*app.use((req,res,next)=>{
+	var now = new Date().toString();
+	var log = `${now}: ${req.method} ${req.url}`;
+	console.log(log);
+	fs.appendFile('server.log',log+'\n',(err)=>{
+		if(err){
+			console.log("Unable to append to server.log");
+		}
+	})
+	next();
+});*/
 
 app.post("/todos",(req,res)=>{
 	var todo = new Todo({
@@ -96,13 +109,13 @@ app.post("/users",(req,res)=>{
 	var user = new User(body);
 	user.save().then(()=>{
 		return user.generateAuthToken();
-		//res.send(user);
 	},(err)=>{
 		res.status(400).send(err);
 	}).then((token)=>{
-		res.header("x-auth",token).send(user);
+		//console.log('token',token);
+		return res.header("x-auth",token).send(user);
 	}).catch((e)=>{
-		res.status(400).send(err);
+		res.status(400).send();
 	});
 });
 
